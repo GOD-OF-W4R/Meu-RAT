@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 # --- CONFIGURAÇÕES ---
 BOT="Windows.exe"
 HELPER="Windows_helper.exe"
