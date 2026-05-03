@@ -1,0 +1,51 @@
+Para transformar o **Vortex Bank** numa simulação fiel aos bancos moçambicanos (como BCI ou Millennium bim) mantendo o teu estilo de codificação, aqui está o roteiro detalhado para cada uma das 13 classes:
+### 1. Conta.java (A Base)
+Esta é a tua classe "mãe". Deves manter os campos protected para que as outras classes vejam.
+ * **O que fazer:** Adiciona um método public void atualizarSaldo(float valor) que pode ser positivo (depósito) ou negativo (levantamento/taxas).
+ * **Regra Real:** Adiciona uma variável para o **NUIB** (Número Único de Identificação Bancária), que em Moçambique é usado para identificar o cliente no sistema central.
+### 2. Cliente.java
+Atualmente ela herda de Conta, mas num banco real, um cliente é uma entidade que **possui** contas.
+ * **Melhoria:** Remove o extends Conta. Em vez disso, adiciona um atributo private Conta minhaConta;.
+ * **Dados Reais:** No toString(), formata o **NUIT** (9 dígitos) e o **BI** (12 dígitos + 1 letra). Isso é essencial para a "Know Your Customer" (KYC) exigida pelo Banco de Moçambique.
+### 3. Calculos.java (O Motor)
+Esta classe está vazia. Ela deve ser static para que possas usar os métodos sem instanciar.
+ * **O que fazer:** Cria o método public static float calcularImposto(float valor).
+ * **Regra Real:** Em Moçambique, quase todas as operações de crédito pagam **2% de Imposto de Selo**. O método deve retornar valor * 0.02f.
+### 4. Emprestimo.java
+Esta classe deve gerir a dívida.
+ * **O que fazer:** Cria atributos como valorEmprestado, taxaJuro e prazoMeses.
+ * **Regra Real:** Usa a **Prime Rate** (atualmente ~22.30%). O cálculo deve ser: (Valor * (PrimeRate + Spread)) + ImpostoSelo. Se o cliente atrasar, adiciona a **Sobretaxa de Mora** de 2%.
+### 5. Deposito.java
+Já tens a lógica de receber o valor no construtor.
+ * **O que fazer:** No construtor ou num método executar(), chama super.setSaldoAC(getSaldoAC() + valorDeposito).
+ * **Regra Real:** Adiciona uma validação: depósitos acima de 250.000 MTn exigem uma declaração de rendimentos (norma contra branqueamento de capitais).
+### 6. Levantamento.java
+ * **O que fazer:** Adiciona um método que verifica se valor <= saldo antes de subtrair.
+ * **Regra Real:** Aplica uma taxa de levantamento fixa (ex: 5 MTn em ATM ou mais ao balcão).
+### 7. Transferencia.java
+ * **O que fazer:** Ela precisa de dois objetos: Conta origem e Conta destino.
+ * **Regra Real:** Se for para outro banco (Interbancária), o NIB de destino deve começar com dígitos diferentes do seu. Cobra uma taxa de serviço (ex: 15 MTn) se for interbancária.
+### 8. novaConta.java
+Esta classe faz o registo inicial.
+ * **Melhoria:** No construtor, além do tipo de conta, gera automaticamente o **NIB** (21 dígitos).
+ * **Regra Real:** Os primeiros 4 dígitos do NIB devem ser o código do seu banco (ex: "0045" para Vortex Bank).
+### 9. Validacoes.java
+Aqui é onde a tua "veia" de cibersegurança brilha.
+ * **O que fazer:** Cria o método public boolean validarTelemovel(String nr).
+ * **Regra Real:** Verifica se começa com 82, 83, 84, 85 ou 87 e se tem exatamente 9 dígitos. Faz o mesmo para o NUIT (apenas números).
+### 10. ContaCorrente.java
+ * **O que fazer:** Usa o campo chequeLimiteEspecial para permitir que o saldo fique negativo até um certo ponto (o "Overdraft").
+ * **Regra Real:** Se o cliente usar o limite, o banco cobra juros diários sobre o valor negativo.
+### 11. Menu.java
+ * **O que fazer:** O método menu() deve retornar a opção escolhida pelo utilizador para a classe Executavel.
+### 12. Visualizacoes.java
+ * **O que fazer:** Cria um método mostrarExtrato(Cliente c).
+ * **Regra Real:** Deve mostrar o histórico de todas as movimentações, não apenas o saldo atual.
+### 13. Executavel.java (O Cérebro)
+Aqui é onde tudo se junta.
+ * **O que fazer:** Cria uma ArrayList<Cliente> listaClientes = new ArrayList<>();.
+ * **Fluxo:**
+   1. Chama o Menu.
+   2. Se a opção for 1, cria um novaConta, gera um Cliente e guarda na lista.
+   3. Se for Depósito, pede o NIB, procura o cliente na lista e executa a classe Deposito.
+**Próximo Passo Sugerido:** Começa por preencher a classe Calculos com a lógica dos 2% de imposto e a Validacoes para o NUIT/BI. Qual destas queres que eu te mostre como codificar agora seguindo exatamente o teu padrão?
