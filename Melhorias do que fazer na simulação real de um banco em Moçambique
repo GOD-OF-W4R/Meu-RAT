@@ -48,4 +48,3 @@ Aqui é onde tudo se junta.
    1. Chama o Menu.
    2. Se a opção for 1, cria um novaConta, gera um Cliente e guarda na lista.
    3. Se for Depósito, pede o NIB, procura o cliente na lista e executa a classe Deposito.
-**Próximo Passo Sugerido:** Começa por preencher a classe Calculos com a lógica dos 2% de imposto e a Validacoes para o NUIT/BI. Qual destas queres que eu te mostre como codificar agora seguindo exatamente o teu padrão?
