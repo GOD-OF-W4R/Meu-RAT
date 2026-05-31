@@ -132,7 +132,7 @@ public class Trabalho1
 	    	System.out.println("|| 7. Ver o estado da empresa.                    ||");
 	    	System.out.println("|| 8. Relatorios de todos os produtos numa tabela.||");
 			System.out.println("|| 9. Relatorio da empresa numa tabela.           ||");
-	    	System.out.println("|| 10. Dados dos programadores.                   ||");
+	    	System.out.println("|| 10. Dados dos programadores e dos docentes.    ||");
 	    	System.out.println("|| 11. Sair!                                      ||");
 	    	System.out.print  ("|| -> ");
 	    	op = Integer.parseInt(walk.readLine()); //receber a resposta do menu ca, para que a resposta fique dentro da tabela do menu
@@ -151,7 +151,7 @@ public class Trabalho1
         			
         	    		if (tp != 'c' & tp != 'C' & tp != 'A' & tp != 'a' & tp != 'M' & tp != 'm' ) 
         	    		{
-        	    			System.out.println ("Caracter Invalido! Tente novamente!");
+        	    			System.out.println ("\nCaracter Invalido! Tente novamente!");
         	    		}
         	    	}
         	    	while (tp != 'c' & tp != 'C' & tp != 'A' & tp != 'a' & tp != 'M' & tp != 'm');
@@ -166,12 +166,12 @@ public class Trabalho1
 						//receber a quantidade de litros, e validar a resposta
         	    		do 
         	    		{
-        	    			System.out.println ("Introduza a quantidade de litros de combustivel: ");
+        	    			System.out.println ("\nIntroduza a quantidade de litros de combustivel: ");
         	    			ql = Integer.parseInt(walk.readLine () );   
 
         	    			if ( ql <=0)
         	    			{
-        	    				System.out.println ("Valor invalido ! Tente novamente! ");
+        	    				System.out.println ("\nValor invalido ! Tente novamente! ");
         	    			}
         	    		} while(ql<=0);
         	    			
@@ -184,12 +184,12 @@ public class Trabalho1
         	    		do 
         	   			{
         			   
-        	   				System.out.println("Que tipo de combustivel possui (G-Gasolina ou S-Gasoleo)?: ");
+        	   				System.out.println("\nQue tipo de combustivel possui (G-Gasolina ou S-Gasoleo)?: ");
         	   				tpC = walk.readLine().charAt(0);
         			   
         	    			if ( tpC != 'G' && tpC != 'g' && tpC != 'S' && tpC != 's' ) 
         	    			{
-        	    				System.out.println ("Caracter Invalido! Tente novamente");  
+        	    				System.out.println ("\nCaracter Invalido! Tente novamente");  
         	   				}
 
         	   			}while (tpC != 'G' && tpC != 'g' && tpC != 'S' && tpC != 's' );
@@ -219,12 +219,12 @@ public class Trabalho1
 						//receber a quantidade de toneladas, e validar a resposta
         	    		do 
         	    		{
-        	    			System.out.print("Digite a quantidade de Alimentos (>0): ");
+        	    			System.out.print("\nDigite a quantidade de Alimentos (>0): ");
         	   				qt = Integer.parseInt(walk.readLine());
         			   
             				if (qt <=0)
             				{
-        	    				System.out.println ("Quantidade Invalida ! Tente novamente!");   
+        	    				System.out.println ("\nQuantidade Invalida ! Tente novamente!");   
         	    			}
         				   
         	    		}while ( qt <=0);
@@ -237,12 +237,12 @@ public class Trabalho1
         	    		do
         	    		{
         		   	   
-        	    			System.out.println("Deseja refrigeracao (S-Sim /N-Nao)?: ");
+        	    			System.out.println("\nDeseja refrigeracao (S-Sim /N-Nao)?: ");
         	   				querR = walk.readLine().charAt(0);
         		    	   
         	   				if (querR != 'S' && querR != 's' && querR != 'N' && querR != 'n')
         	   				{
-        	   					System.out.println ("O caracter invalido ! Tente novamente:");
+        	   					System.out.println ("\nO caracter invalido ! Tente novamente:");
             				}
         		    	   
         	    		}while ( querR != 'S' && querR != 's' && querR != 'N' && querR != 'n');	    			
@@ -270,12 +270,12 @@ public class Trabalho1
         	    	    case'M':
         	    	    do
         	   			{
-        	   				System.out.println ("Introduza a quantidade de caixas (>0):");
+        	   				System.out.println ("\nIntroduza a quantidade de caixas (>0):");
         	   				qca = Integer.parseInt(walk.readLine());
         				  
             				if (qca <=0)
             				{
-        	    				System.out.println ("Quantidade de caixas invalida! Tente novamente!");
+        	    				System.out.println ("\nQuantidade de caixas invalida! Tente novamente!");
         	    			}
         	    				
         	    		}while (qca <=0);
@@ -288,12 +288,12 @@ public class Trabalho1
 						//receber se o medicamento precisa de controle especial ou nao, e validar a resposta
         	   			do
         	   			{
-            				System.out.println ("Quer controle especial (S-Sim / N-Nao)");
+            				System.out.println ("\nQuer controle especial (S-Sim / N-Nao)");
             				querCe = walk.readLine ().charAt(0);
         				  
         	    			if ( querCe != 'S' && querCe != 's' && querCe != 'N' && querCe != 'n')
         	    			{
-        	    				System.out.println (" Caracter invalido! Tente novamente!");
+        	    				System.out.println ("\nCaracter invalido! Tente novamente!");
         	   				}
         			  
             			}while ( querCe != 'S' && querCe != 's' && querCe != 'N' && querCe != 'n');
@@ -323,7 +323,7 @@ public class Trabalho1
 					//receber o estado da remessa, e validar a resposta
         	    	do 
     	    		{
-    	    			System.out.println("Introduza o estado da remessa (C-Em curso / A-Atrasado): ");
+    	    			System.out.println("\nIntroduza o estado da remessa (C-Em curso / A-Atrasado): ");
     	    			eT = walk.readLine().charAt(0);
 
 						if (eT == 'A' || eT == 'a')
@@ -332,7 +332,7 @@ public class Trabalho1
 						}
     	    			
     	    			if (eT != 'a' && eT != 'A' && eT != 'c' && eT != 'C')
-    	    				System.out.println("Opcao invalida, tente de novo!");
+    	    				System.out.println("\nOpcao invalida, tente de novo!");
     	    			
     	    		}while(eT != 'a' && eT != 'A' && eT != 'c' && eT != 'C');
         	    	
@@ -377,7 +377,7 @@ public class Trabalho1
 					}
         	    	
 					//recibo para o cliente
-        	    	System.out.println ("========================================================================================================================");
+        	    	System.out.println ("\n=========================================================================================================================");
 					System.out.println ("|| Remessa || Estado || preco por uma quantidade || Quantidades possuidas ||     Penalizacao  ||   Valor total a pagar ||"); 	
 					System.out.println ("||---------||--------||--------------------------||-----------------------||------------------||-----------------------||");
             		System.out.printf  ("%c%c%6c%4c%c%5c%4c%c%16s%11c%c%16d%8c%c%17s%2c%c%21s%3c%c\n" ,'|','|',tp,'|','|',eT,'|','|',mt.format(preco),'|','|',quantidade,'|','|',mt.format(p),'|','|',mt.format(vP),'|','|');
@@ -391,7 +391,7 @@ public class Trabalho1
             	
 				//caso o usuario escolha a opcao 2 do menu, mostrar a quantidade total de cada tipo de produto numa tabela
             	case 2:
-            		System.out.println ("||==========================================================||");
+            		System.out.println ("\n||==========================================================||");
             		System.out.println ("||    Combustivel    ||    Alimento    ||    Medicamento    ||");
 					System.out.println ("||-------------------||----------------||-------------------||");
             		System.out.printf  ("%c%c%16d%4c%c%10d%7c%c%11d%9c%c\n" ,'|','|',qC,'|','|',qA,'|','|',qM,'|','|');
@@ -401,7 +401,7 @@ public class Trabalho1
             	
 				//caso o usuario escolha a opcao 3 do menu, mostrar o valor total de cada tipo de produto numa tabela
             	case 3:
-            		System.out.println ("||========================================================================================||");
+            		System.out.println ("\n||========================================================================================||");
             		System.out.println ("||         Combustivel         ||         Alimento         ||         Medicamento         ||");
 					System.out.println ("||-----------------------------||--------------------------||-----------------------------||");
 					System.out.printf  ("%c%c%25s%5c%c%21s%6c%c%22s%8c%c\n" ,'|','|',mt.format(vtC),'|','|',mt.format(vtA),'|','|',mt.format(vtM),'|','|');
@@ -412,7 +412,7 @@ public class Trabalho1
 
 				//caso o usuario escolha a opcao 4 do menu, mostrar o valor total da importacao
             	case 4:
-            		System.out.println ("================================");
+            		System.out.println ("\n================================");
             		System.out.println ("||  Valor total da importacao ||");
 					System.out.println ("||----------------------------||");
             		System.out.printf  ("%c%c%23s%6c%c", '|' , '|' , mt.format(acum), '|' , '|');
@@ -423,7 +423,7 @@ public class Trabalho1
 
 				//caso o usuario escolha a opcao 5 do menu, mostrar o valor total das penalizacoes
             	case 5:
-            		System.out.println ("||============================||");
+            		System.out.println ("\n||============================||");
             		System.out.println ("|| Valor total da penalizacao ||");
 					System.out.println ("||----------------------------||");
             		System.out.printf  ("%c%c%21s%8c%c\n" ,'|','|',mt.format(vTP),'|','|');
@@ -438,64 +438,66 @@ public class Trabalho1
 
 				    //validar se o usuario ja passou pela opcao 1 do menu, para que possa ser utilizado a opcao 6 do menu, caso contrario mostrar uma mensagem de erro
 					if(passou_opcao1 == true) 
-					{
+					{   
 
+						//comparar os tipos para identificar o menor produto, e valodar como true a variavel do tipo de produto com menor valor total
 						if (vtC < vtA && vtC < vtM) 
 						{
-							System.out.println ("Valor do combustivel e menor");
+							System.out.println ("\nValor do combustivel e menor");
 							menorC = true;            			
 						}
 						else
 							if (vtA < vtM && vtA < vtC) 
 							{
-								System.out.println ("Valor do alimento e menor");
+								System.out.println ("\nValor do alimento e menor");
 								menorA = true;
 							}
 						   else
 						   {
 								if (vtM < vtC && vtM < vtA)
 								{
-									System.out.println ("Valor do medicamento e menor");
+									System.out.println ("\nValor do medicamento e menor");
 									menorM = true;
 								}
 								else
 								{
-									System.out.println ("Existem dois ou mais produtos com o mesmo valor. \nTente validar mais um cliente primeiro!");
+									System.out.println ("\nExistem dois produtos com o mesmo valor. \nTente validar mais um cliente primeiro!");
 								}
 							}
 					}
 					else
 					{
-						System.out.println("Ainda nao foram introduzidos dados, por passe da opcao 1 primeiro!\n");
+						System.out.println("\nAinda nao foram introduzidos dados, por passe da opcao 1 primeiro!\n");
 					}
             		
             		break;
             	
-				//
+				//verificar se o valor total da importacao ultrapassou o orcamento, e mostrar uma mensagem de acordo com a situacao
             	case 7:
 					if (passou_opcao1 == true)
 					{
-						if (acum > DESPESAS)
+						if (acum >= DESPESAS)
 						{
-							System.out.println ("O valor da empressa ultrapassou o orcamento!");
+							System.out.println ("\nO valor da empressa ultrapassou o orcamento!");
 						    esta_dentro_do_orcamento = false;
 						}
 						else
 						{
-							System.out.println ("O valor da empresa esta dentro do orcamento!");
+							System.out.println ("\nO valor da empresa esta dentro do orcamento!");
 							esta_dentro_do_orcamento = true;
 						}
 					}
 					else
 					{
-						System.out.println("Por favor passe da opcao 1 primeiro antes de ver o estado da empresa!\n");
+						System.out.println("\nPor favor passe da opcao 1 primeiro antes de ver o estado da empresa!\n");
 					}
             		break;
-
+				
+				//caso o usuario escolha a opcao 8 do menu, mostrar um relatorio de todos os produtos numa tabela
             	case 8:
             		if(passou_opcao1 == true)
             		{
-						System.out.println("=============================================================================");
+						System.out.println("\n============================================================================");
 						System.out.println("|| Remessas    || Quant Total ||      Valor Total     || Tem menor custo? ||");
 						System.out.println("||-------------||-------------||----------------------||------------------||");
 						System.out.printf ("|| Combustivel || %11d || %20s || %10s       ||\n" ,qC,mt.format(vtC),menorC);
@@ -505,13 +507,15 @@ public class Trabalho1
             		}
             		else
             		{
-            			System.out.println("Por favor passe da opcao 1 primeiro antes de ver o relatorio!\n");
+            			System.out.println("\nPor favor passe da opcao 1 primeiro antes de ver o relatorio!\n");
             		}
             		break;
-            		
+
+            	//caso o usuario escolha a opcao 9 do menu, mostrar um relatorio da empresa numa tabela, com o valor total da importacao, o valor total das penalizacoes, o limite de despesas, se esta dentro do orcamento ou nao, e o estado das remessas por categoria
 				case 9:
 					if(passou_opcao1 == true)
 					{
+						
 						System.out.println("\n=======================================================================================================");
 						System.out.println("||                                   RELATORIO CORPORATIVO                                           ||");
 						System.out.println("=======================================================================================================");
@@ -529,17 +533,17 @@ public class Trabalho1
 						System.out.printf ("|| Combustivel   | %10d | %23s | %23s | %16s ||\n", contador_Combustivel, litros.format(qC), mt.format(vtC), menorC);
 						System.out.printf ("|| Alimentos     | %10d | %23s | %23s | %16s ||\n", contador_Alimentos, toneladas.format(qA), mt.format(vtA), menorA);
 						System.out.printf ("|| Medicamentos  | %10d | %23s | %23s | %16s ||\n", contador_Medicamentos, caixas.format(qM), mt.format(vtM), menorM);
-						System.out.println("======================================================================================================\n");
+						System.out.println("=======================================================================================================\n");
 
 					}
 					else
 					{
-						System.out.println("Por favor passe da opcao 1 primeiro antes de ver o relatorio!\n");
+						System.out.println("\nPor favor passe da opcao 1 primeiro antes de ver o relatorio!\n");
 					}
 					break;
-            		
+            	//caso o usuario escolha a opcao 10 do menu, mostrar os dados dos programadores e dos docentes numa tabela
             	case 10:
-            		System.out.println("==============================================");
+            		System.out.println("\n==============================================");
             		System.out.println("|| Nome dos programadores ||     Codigo     ||");
             		System.out.println("||------------------------||----------------||");
             		System.out.println("||     Alaine General     ||    20260665    ||");
@@ -547,21 +551,24 @@ public class Trabalho1
             		System.out.println("||     Kleyton Velichane  ||    20250671    ||");
             		System.out.println("||     Wendy Maduela      ||    20260835    ||");
             		System.out.println("==============================================");
+
+					System.out.println("\n===========================");
+            		System.out.println("||   Nome dos Docentes   ||");
+					System.out.println("||-----------------------||");
+            		System.out.println("|| Eng. Darmite Meggi    ||");
+            		System.out.println("|| Eng. Abel Ernesto     ||");
+            		System.out.println("|| Eng. Alan Nhanala     ||");
+            		System.out.println("===========================");
             		break;
             		
             		
-            	case 11: System.out.println("Obrigado por usar o programa!"); break;
+            	case 11: System.out.println("\nObrigado por usar o programa!"); break;
             		
             	
-            	default : System.out.println("Opcao invalida, Tente novamente!"); break; 
+            	default : System.out.println("\nOpcao invalida, Tente novamente!"); break; 
             }
 
-
-	    	
-	    
-	    
-	
-	    
-	}while(op != 11);
-  }
+		}while(op != 11);
+  	}
+  
 }
