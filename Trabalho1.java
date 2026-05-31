@@ -377,11 +377,11 @@ public class Trabalho1
 					}
         	    	
 					//recibo para o cliente
-        	    	System.out.println ("====================================================================================================================");
-					System.out.println ("|| Remessa || Estado || preco por uma quantidade || Quantidades possuidas ||  Penalizacao  || Valor total a pagar ||"); 	
-					System.out.println ("||---------||--------||--------------------------||-----------------------||---------------||---------------------||");
-            		System.out.printf  ("%c%c%6c%4c%c%5c%4c%c%16s%11c%c%13d%11c%c%13s%3c%c%16s%6c%c\n" ,'|','|',tp,'|','|',eT,'|','|',mt.format(preco),'|','|',quantidade,'|','|',mt.format(p),'|','|',mt.format(vP),'|','|');
-					System.out.println ("====================================================================================================================\n");
+        	    	System.out.println ("========================================================================================================================");
+					System.out.println ("|| Remessa || Estado || preco por uma quantidade || Quantidades possuidas ||     Penalizacao  ||   Valor total a pagar ||"); 	
+					System.out.println ("||---------||--------||--------------------------||-----------------------||------------------||-----------------------||");
+            		System.out.printf  ("%c%c%6c%4c%c%5c%4c%c%16s%11c%c%16d%8c%c%17s%2c%c%21s%3c%c\n" ,'|','|',tp,'|','|',eT,'|','|',mt.format(preco),'|','|',quantidade,'|','|',mt.format(p),'|','|',mt.format(vP),'|','|');
+					System.out.println ("=========================================================================================================================\n");
 
 
 					//atualizar a variavel passou_opcao1 para true, para que as outras opcoes do menu possam ser utilizadas
@@ -394,7 +394,7 @@ public class Trabalho1
             		System.out.println ("||==========================================================||");
             		System.out.println ("||    Combustivel    ||    Alimento    ||    Medicamento    ||");
 					System.out.println ("||-------------------||----------------||-------------------||");
-            		System.out.printf  ("%c%c%10d%10c%c%10d%7c%c%11d%9c%c\n" ,'|','|',qC,'|','|',qA,'|','|',qM,'|','|');
+            		System.out.printf  ("%c%c%16d%4c%c%10d%7c%c%11d%9c%c\n" ,'|','|',qC,'|','|',qA,'|','|',qM,'|','|');
             		System.out.println ("||==========================================================||\n");
             		
             		break;
@@ -404,7 +404,7 @@ public class Trabalho1
             		System.out.println ("||========================================================================================||");
             		System.out.println ("||         Combustivel         ||         Alimento         ||         Medicamento         ||");
 					System.out.println ("||-----------------------------||--------------------------||-----------------------------||");
-					System.out.printf  ("%c%c%19s%11c%c%16s%11c%c%19s%11c%c\n" ,'|','|',mt.format(vtC),'|','|',mt.format(vtA),'|','|',mt.format(vtM),'|','|');
+					System.out.printf  ("%c%c%25s%5c%c%21s%6c%c%22s%8c%c\n" ,'|','|',mt.format(vtC),'|','|',mt.format(vtA),'|','|',mt.format(vtM),'|','|');
             		System.out.println ("||========================================================================================||\n");
             		
 
@@ -415,7 +415,7 @@ public class Trabalho1
             		System.out.println ("================================");
             		System.out.println ("||  Valor total da importacao ||");
 					System.out.println ("||----------------------------||");
-            		System.out.printf  ("%c%c%19s%10c%c", '|' , '|' , mt.format(acum), '|' , '|');
+            		System.out.printf  ("%c%c%23s%6c%c", '|' , '|' , mt.format(acum), '|' , '|');
             		System.out.println ("\n||============================||\n");
             		
             		
@@ -423,11 +423,11 @@ public class Trabalho1
 
 				//caso o usuario escolha a opcao 5 do menu, mostrar o valor total das penalizacoes
             	case 5:
-            		System.out.println ("||=========================================||");
-            		System.out.println ("||      Valor total da penalizacao         ||");
-					System.out.println ("||-----------------------------------------||");
-            		System.out.printf  ("%c%c%27s%15c%c\n" ,'|','|',mt.format(vTP),'|','|');
-            		System.out.println ("||=========================================||\n");
+            		System.out.println ("||============================||");
+            		System.out.println ("|| Valor total da penalizacao ||");
+					System.out.println ("||----------------------------||");
+            		System.out.printf  ("%c%c%21s%8c%c\n" ,'|','|',mt.format(vTP),'|','|');
+            		System.out.println ("||============================||\n");
             		
             	    
             	
@@ -495,13 +495,13 @@ public class Trabalho1
             	case 8:
             		if(passou_opcao1 == true)
             		{
-						System.out.println("=======================================================================");
-						System.out.println("|| Remessas    || Quant Total ||   Valor Total   || Tem menor custo? ||");
-						System.out.println("||-------------||-------------||-----------------||------------------||");
-						System.out.printf ("|| Combustivel || %6d      || %15s || %10s       ||\n" ,qC,mt.format(vtC),menorC);
-						System.out.printf ("|| Alimento    || %6d      || %15s || %10s       ||\n" ,qA,mt.format(vtA),menorA);
-						System.out.printf ("|| Medicamento || %6d      || %15s || %10s       ||\n" ,qM,mt.format(vtM),menorM);
-						System.out.println("=======================================================================\n");
+						System.out.println("=============================================================================");
+						System.out.println("|| Remessas    || Quant Total ||      Valor Total     || Tem menor custo? ||");
+						System.out.println("||-------------||-------------||----------------------||------------------||");
+						System.out.printf ("|| Combustivel || %11d || %20s || %10s       ||\n" ,qC,mt.format(vtC),menorC);
+						System.out.printf ("|| Alimento    || %11d || %20s || %10s       ||\n" ,qA,mt.format(vtA),menorA);
+						System.out.printf ("|| Medicamento || %11d || %20s || %10s       ||\n" ,qM,mt.format(vtM),menorM);
+						System.out.println("============================================================================\n");
             		}
             		else
             		{
@@ -512,24 +512,24 @@ public class Trabalho1
 				case 9:
 					if(passou_opcao1 == true)
 					{
-						System.out.println("\n===========================================================================================");
-						System.out.println("||                                RELATORIO CORPORATIVO                                  ||");
-						System.out.println("===========================================================================================");
-						System.out.println("|| 1. RELATORIO GERAL DA EMPRESA                                                         ||");
-						System.out.println("||---------------------------------------------------------------------------------------||");
-						System.out.printf ("|| Faturamento Bruto Total    | %56s ||\n", mt.format(acum));
-						System.out.printf ("|| Total em Penalizacoes      | %56s ||\n", mt.format(vTP));
-						System.out.printf ("|| Limite de Despesas         | %56s ||\n", mt.format(DESPESAS));
-						System.out.printf ("|| Esta dentro do orcamento?  | %56s ||\n", esta_dentro_do_orcamento);
-						System.out.println("||---------------------------------------------------------------------------------------||");
-						System.out.println("|| 2. ESTADO DAS REMESSAS POR CATEGORIA                                                  ||");
-						System.out.println("||---------------------------------------------------------------------------------------||");
-						System.out.println("|| Categoria     | Transacoes |   Vol. Importado  | Faturamento Total | Custo Mais Baixo ||");
-						System.out.println("||---------------|------------|-------------------|-------------------|------------------||");
-						System.out.printf ("|| Combustivel   | %10d | %17s | %17s | %16s ||\n", contador_Combustivel, litros.format(qC), mt.format(vtC), menorC);
-						System.out.printf ("|| Alimentos     | %10d | %17s | %17s | %16s ||\n", contador_Alimentos, toneladas.format(qA), mt.format(vtA), menorA);
-						System.out.printf ("|| Medicamentos  | %10d | %17s | %17s | %16s ||\n", contador_Medicamentos, caixas.format(qM), mt.format(vtM), menorM);
-						System.out.println("===========================================================================================\n");
+						System.out.println("\n=======================================================================================================");
+						System.out.println("||                                   RELATORIO CORPORATIVO                                           ||");
+						System.out.println("=======================================================================================================");
+						System.out.println("|| 1. RELATORIO GERAL DA EMPRESA                                                                     ||");
+						System.out.println("||---------------------------------------------------------------------------------------------------||");
+						System.out.printf ("|| Faturamento Bruto Total    |    %65s ||\n", mt.format(acum));
+						System.out.printf ("|| Total em Penalizacoes      |    %65s ||\n", mt.format(vTP));
+						System.out.printf ("|| Limite de Despesas         |    %65s ||\n", mt.format(DESPESAS));
+						System.out.printf ("|| Esta dentro do orcamento?  |    %65s ||\n", esta_dentro_do_orcamento);
+						System.out.println("||---------------------------------------------------------------------------------------------------||");
+						System.out.println("|| 2. ESTADO DAS REMESSAS POR CATEGORIA                                                              ||");
+						System.out.println("||---------------------------------------------------------------------------------------------------||");
+						System.out.println("|| Categoria     | Transacoes |      Vol. Importado     |    Faturamento Total    | Custo Mais Baixo ||");
+						System.out.println("||---------------|------------|-------------------------|-------------------------|------------------||");
+						System.out.printf ("|| Combustivel   | %10d | %23s | %23s | %16s ||\n", contador_Combustivel, litros.format(qC), mt.format(vtC), menorC);
+						System.out.printf ("|| Alimentos     | %10d | %23s | %23s | %16s ||\n", contador_Alimentos, toneladas.format(qA), mt.format(vtA), menorA);
+						System.out.printf ("|| Medicamentos  | %10d | %23s | %23s | %16s ||\n", contador_Medicamentos, caixas.format(qM), mt.format(vtM), menorM);
+						System.out.println("======================================================================================================\n");
 
 					}
 					else
